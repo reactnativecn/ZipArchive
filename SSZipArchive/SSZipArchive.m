@@ -12,12 +12,12 @@
 #include <zlib.h>
 #include <sys/stat.h>
 
-NSString *const SSZipArchiveErrorDomain = @"SSZipArchiveErrorDomain";
+NSString *const PushySSZipArchiveErrorDomain = @"PushySSZipArchiveErrorDomain";
 
 #define CHUNK 16384
 
-int _zipOpenEntry(zipFile entry, NSString *name, const zip_fileinfo *zipfi, int level, NSString *password, BOOL aes);
-BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
+int pushy_zipOpenEntry(zipFile entry, NSString *name, const zip_fileinfo *zipfi, int level, NSString *password, BOOL aes);
+BOOL pushy_fileIsSymbolicLink(const unz_file_info *fileInfo);
 
 #ifndef API_AVAILABLE
 // Xcode 7- compatibility
@@ -25,12 +25,12 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
 #endif
 
 @interface NSData(PushySSZipArchive)
-- (NSString *)_base64RFC4648 API_AVAILABLE(macos(10.9), ios(7.0), watchos(2.0), tvos(9.0));
-- (NSString *)_hexString;
+- (NSString *)pushy_base64RFC4648 API_AVAILABLE(macos(10.9), ios(7.0), watchos(2.0), tvos(9.0));
+- (NSString *)pushy_hexString;
 @end
 
 @interface NSString (PushySSZipArchive)
-- (NSString *)_sanitizedPath;
+- (NSString *)pushy_sanitizedPath;
 @end
 
 @interface PushySSZipArchive ()
@@ -93,7 +93,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
     zipFile zip = unzOpen(path.fileSystemRepresentation);
     if (zip == NULL) {
         if (error) {
-            *error = [NSError errorWithDomain:SSZipArchiveErrorDomain
+            *error = [NSError errorWithDomain:PushySSZipArchiveErrorDomain
                                          code:SSZipArchiveErrorCodeFailedOpenZipFile
                                      userInfo:@{NSLocalizedDescriptionKey: @"failed to open zip file"}];
         }
@@ -113,7 +113,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
             if (ret != UNZ_OK) {
                 if (ret != MZ_PASSWORD_ERROR) {
                     if (error) {
-                        *error = [NSError errorWithDomain:SSZipArchiveErrorDomain
+                        *error = [NSError errorWithDomain:PushySSZipArchiveErrorDomain
                                                      code:SSZipArchiveErrorCodeFailedOpenFileInZip
                                                  userInfo:@{NSLocalizedDescriptionKey: @"failed to open file in zip archive"}];
                     }
@@ -125,7 +125,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
             ret = unzGetCurrentFileInfo(zip, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
             if (ret != UNZ_OK) {
                 if (error) {
-                    *error = [NSError errorWithDomain:SSZipArchiveErrorDomain
+                    *error = [NSError errorWithDomain:PushySSZipArchiveErrorDomain
                                                  code:SSZipArchiveErrorCodeFileInfoNotLoadable
                                              userInfo:@{NSLocalizedDescriptionKey: @"failed to retrieve info for file"}];
                 }
@@ -139,7 +139,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                     // Let's assume other errors are caused by Content Not Readable
                     if (readBytes != Z_DATA_ERROR) {
                         if (error) {
-                            *error = [NSError errorWithDomain:SSZipArchiveErrorDomain
+                            *error = [NSError errorWithDomain:PushySSZipArchiveErrorDomain
                                                          code:SSZipArchiveErrorCodeFileContentNotReadable
                                                      userInfo:@{NSLocalizedDescriptionKey: @"failed to read contents of file entry"}];
                         }
@@ -168,7 +168,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
     zipFile zip = unzOpen(path.fileSystemRepresentation);
     if (zip == NULL) {
         if (error) {
-            *error = [NSError errorWithDomain:SSZipArchiveErrorDomain
+            *error = [NSError errorWithDomain:PushySSZipArchiveErrorDomain
                                          code:SSZipArchiveErrorCodeFailedOpenZipFile
                                      userInfo:@{NSLocalizedDescriptionKey: @"failed to open zip file"}];
         }
@@ -182,7 +182,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
             ret = unzOpenCurrentFile(zip);
             if (ret != UNZ_OK) {
                 if (error) {
-                    *error = [NSError errorWithDomain:SSZipArchiveErrorDomain
+                    *error = [NSError errorWithDomain:PushySSZipArchiveErrorDomain
                                                  code:SSZipArchiveErrorCodeFailedOpenFileInZip
                                              userInfo:@{NSLocalizedDescriptionKey: @"failed to open file in zip archive"}];
                 }
@@ -192,7 +192,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
             ret = unzGetCurrentFileInfo(zip, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
             if (ret != UNZ_OK) {
                 if (error) {
-                    *error = [NSError errorWithDomain:SSZipArchiveErrorDomain
+                    *error = [NSError errorWithDomain:PushySSZipArchiveErrorDomain
                                                  code:SSZipArchiveErrorCodeFileInfoNotLoadable
                                              userInfo:@{NSLocalizedDescriptionKey: @"failed to retrieve info for file"}];
                 }
@@ -295,7 +295,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
     if (path.length == 0 || destination.length == 0)
     {
         NSDictionary *userInfo = @{NSLocalizedDescriptionKey: @"received invalid argument(s)"};
-        NSError *err = [NSError errorWithDomain:SSZipArchiveErrorDomain code:SSZipArchiveErrorCodeInvalidArguments userInfo:userInfo];
+        NSError *err = [NSError errorWithDomain:PushySSZipArchiveErrorDomain code:SSZipArchiveErrorCodeInvalidArguments userInfo:userInfo];
         if (error)
         {
             *error = err;
@@ -312,7 +312,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
     if (zip == NULL)
     {
         NSDictionary *userInfo = @{NSLocalizedDescriptionKey: @"failed to open zip file"};
-        NSError *err = [NSError errorWithDomain:SSZipArchiveErrorDomain code:SSZipArchiveErrorCodeFailedOpenZipFile userInfo:userInfo];
+        NSError *err = [NSError errorWithDomain:PushySSZipArchiveErrorDomain code:SSZipArchiveErrorCodeFailedOpenZipFile userInfo:userInfo];
         if (error)
         {
             *error = err;
@@ -337,7 +337,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
     if (ret != UNZ_OK && ret != MZ_END_OF_LIST)
     {
         NSDictionary *userInfo = @{NSLocalizedDescriptionKey: @"failed to open first file in zip file"};
-        NSError *err = [NSError errorWithDomain:SSZipArchiveErrorDomain code:SSZipArchiveErrorCodeFailedOpenFileInZip userInfo:userInfo];
+        NSError *err = [NSError errorWithDomain:PushySSZipArchiveErrorDomain code:SSZipArchiveErrorCodeFailedOpenFileInZip userInfo:userInfo];
         if (error)
         {
             *error = err;
@@ -428,7 +428,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
             unzGetCurrentFileInfo(zip, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
             filename[fileInfo.size_filename] = '\0';
             
-            BOOL fileIsSymbolicLink = _fileIsSymbolicLink(&fileInfo);
+            BOOL fileIsSymbolicLink = pushy_fileIsSymbolicLink(&fileInfo);
             
             NSString * strPath = [PushySSZipArchive _filenameStringWithCString:filename
                                                           version_made_by:fileInfo.version
@@ -450,7 +450,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
             free(filename);
             
             // Sanitize paths in the file name.
-            strPath = [strPath _sanitizedPath];
+            strPath = [strPath pushy_sanitizedPath];
             if (!strPath.length) {
                 // if filename data is unsalvageable, we default to currentFileNumber
                 strPath = @(currentFileNumber).stringValue;
@@ -649,7 +649,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                             NSString *message = [NSString stringWithFormat:@"Failed to delete existing symbolic link at \"%@\"", localError.localizedDescription];
                             NSLog(@"[SSZipArchive] %@", message);
                             success = NO;
-                            unzippingError = [NSError errorWithDomain:SSZipArchiveErrorDomain code:localError.code userInfo:@{NSLocalizedDescriptionKey: message}];
+                            unzippingError = [NSError errorWithDomain:PushySSZipArchiveErrorDomain code:localError.code userInfo:@{NSLocalizedDescriptionKey: message}];
                         }
                     }
                 }
@@ -723,7 +723,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
     if (crc_ret == MZ_CRC_ERROR)
     {
         NSDictionary *userInfo = @{NSLocalizedDescriptionKey: @"crc check failed for file"};
-        retErr = [NSError errorWithDomain:SSZipArchiveErrorDomain code:SSZipArchiveErrorCodeFileInfoNotLoadable userInfo:userInfo];
+        retErr = [NSError errorWithDomain:PushySSZipArchiveErrorDomain code:SSZipArchiveErrorCodeFileInfoNotLoadable userInfo:userInfo];
     }
     
     if (error) {
@@ -1021,7 +1021,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
     
     [PushySSZipArchive zipInfo:&zipInfo setAttributesOfItemAtPath:path];
     
-    int error = _zipOpenEntry(_zip, [folderName stringByAppendingString:@"/"], &zipInfo, Z_NO_COMPRESSION, password, NO);
+    int error = pushy_zipOpenEntry(_zip, [folderName stringByAppendingString:@"/"], &zipInfo, Z_NO_COMPRESSION, password, NO);
     const void *buffer = NULL;
     zipWriteInFileInZip(_zip, buffer, 0);
     zipCloseFileInZip(_zip);
@@ -1065,7 +1065,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
         return NO;
     }
     
-    int error = _zipOpenEntry(_zip, fileName, &zipInfo, compressionLevel, password, aes);
+    int error = pushy_zipOpenEntry(_zip, fileName, &zipInfo, compressionLevel, password, aes);
     
     while (!feof(input) && !ferror(input))
     {
@@ -1095,7 +1095,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
     zip_fileinfo zipInfo = {};
     [PushySSZipArchive zipInfo:&zipInfo setDate:[NSDate date]];
     
-    int error = _zipOpenEntry(_zip, filename, &zipInfo, compressionLevel, password, aes);
+    int error = pushy_zipOpenEntry(_zip, filename, &zipInfo, compressionLevel, password, aes);
     
     zipWriteInFileInZip(_zip, data.bytes, (unsigned int)data.length);
     
@@ -1180,7 +1180,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
     
     // if filename encoding is non-detected, we default to something based on data
     // _hexString is more readable than _base64RFC4648 for debugging unknown encodings
-    strPath = [data _hexString];
+    strPath = [data pushy_hexString];
     return strPath;
 }
 
@@ -1279,7 +1279,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
 
 @end
 
-int _zipOpenEntry(zipFile entry, NSString *name, const zip_fileinfo *zipfi, int level, NSString *password, BOOL aes)
+int pushy_zipOpenEntry(zipFile entry, NSString *name, const zip_fileinfo *zipfi, int level, NSString *password, BOOL aes)
 {
     // https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT
     uint16_t made_on_darwin = 19 << 8;
@@ -1290,7 +1290,7 @@ int _zipOpenEntry(zipFile entry, NSString *name, const zip_fileinfo *zipfi, int 
 
 #pragma mark - Private tools for file info
 
-BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo)
+BOOL pushy_fileIsSymbolicLink(const unz_file_info *fileInfo)
 {
     //
     // Determine whether this is a symbolic link:
@@ -1313,13 +1313,13 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo)
 
 #pragma mark - Private tools for unreadable encodings
 
-@implementation NSData (SSZipArchive)
+@implementation NSData (PushySSZipArchive)
 
 // `base64EncodedStringWithOptions` uses a base64 alphabet with '+' and '/'.
 // we got those alternatives to make it compatible with filenames: https://en.wikipedia.org/wiki/Base64
 // * modified Base64 encoding for IMAP mailbox names (RFC 3501): uses '+' and ','
 // * modified Base64 for URL and filenames (RFC 4648): uses '-' and '_'
-- (NSString *)_base64RFC4648
+- (NSString *)pushy_base64RFC4648
 {
     NSString *strName = [self base64EncodedStringWithOptions:0];
     strName = [strName stringByReplacingOccurrencesOfString:@"+" withString:@"-"];
@@ -1330,7 +1330,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo)
 // initWithBytesNoCopy from NSProgrammer, Jan 25 '12: https://stackoverflow.com/a/9009321/1033581
 // hexChars from Peter, Aug 19 '14: https://stackoverflow.com/a/25378464/1033581
 // not implemented as too lengthy: a potential mapping improvement from Moose, Nov 3 '15: https://stackoverflow.com/a/33501154/1033581
-- (NSString *)_hexString
+- (NSString *)pushy_hexString
 {
     const char *hexChars = "0123456789ABCDEF";
     NSUInteger length = self.length;
@@ -1359,12 +1359,12 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo)
 
 #pragma mark Private tools for security
 
-@implementation NSString (SSZipArchive)
+@implementation NSString (PushySSZipArchive)
 
 // One implementation alternative would be to use the algorithm found at mz_path_resolve from https://github.com/nmoinvaz/minizip/blob/dev/mz_os.c,
 // but making sure to work with unichar values and not ascii values to avoid breaking Unicode characters containing 2E ('.') or 2F ('/') in their decomposition
 /// Sanitize path traversal characters to prevent directory backtracking. Ignoring these characters mimicks the default behavior of the Unarchiving tool on macOS.
-- (NSString *)_sanitizedPath
+- (NSString *)pushy_sanitizedPath
 {
     // Change Windows paths to Unix paths: https://en.wikipedia.org/wiki/Path_(computing)
     // Possible improvement: only do this if the archive was created on a non-Unix system

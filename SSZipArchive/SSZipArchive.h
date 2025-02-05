@@ -14,7 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString *const SSZipArchiveErrorDomain;
+extern NSString *const PushySSZipArchiveErrorDomain;
 typedef NS_ENUM(NSInteger, PushySSZipArchiveErrorCode) {
     SSZipArchiveErrorCodeFailedOpenZipFile      = -1,
     SSZipArchiveErrorCodeFailedOpenFileInZip    = -2,
@@ -159,6 +159,20 @@ typedef NS_ENUM(NSInteger, PushySSZipArchiveErrorCode) {
 - (void)zipArchiveProgressEvent:(unsigned long long)loaded total:(unsigned long long)total;
 
 @end
+
+// Category declarations
+@interface NSData(PushySSZipArchive)
+- (NSString *)pushy_base64RFC4648 API_AVAILABLE(macos(10.9), ios(7.0), watchos(2.0), tvos(9.0));
+- (NSString *)pushy_hexString;
+@end
+
+@interface NSString (PushySSZipArchive)
+- (NSString *)pushy_sanitizedPath;
+@end
+
+// Global function declarations
+int pushy_zipOpenEntry(zipFile entry, NSString *name, const zip_fileinfo *zipfi, int level, NSString *password, BOOL aes);
+BOOL pushy_fileIsSymbolicLink(const unz_file_info *fileInfo);
 
 NS_ASSUME_NONNULL_END
 
