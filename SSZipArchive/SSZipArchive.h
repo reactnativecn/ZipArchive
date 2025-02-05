@@ -37,7 +37,7 @@ typedef NS_ENUM(NSInteger, PushySSZipArchiveErrorCode) {
 
 // Unzip
 + (BOOL)pushy_unzipFileAtPath:(NSString *)path toDestination:(NSString *)destination;
-+ (BOOL)pushy_unzipFileAtPath:(NSString *)path toDestination:(NSString *)destination delegate:(nullable id<PushySSZipArchiveDelegate>)delegate;
++ (BOOL)pushy_unzipFileAtPath:(NSString *)path toDestination:(NSString *)destination delegate:(nullable id<SSZipArchiveDelegate>)delegate;
 
 + (BOOL)pushy_unzipFileAtPath:(NSString *)path
           toDestination:(NSString *)destination
