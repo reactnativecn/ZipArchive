@@ -170,9 +170,6 @@ typedef NS_ENUM(NSInteger, PushySSZipArchiveErrorCode) {
 - (NSString *)pushy_sanitizedPath;
 @end
 
-// Global function declarations
-int pushy_zipOpenEntry(zipFile entry, NSString *name, const zip_fileinfo *zipfi, int level, NSString *password, BOOL aes);
-BOOL pushy_fileIsSymbolicLink(const unz_file_info *fileInfo);
 
 NS_ASSUME_NONNULL_END
 
