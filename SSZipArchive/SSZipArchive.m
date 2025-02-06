@@ -223,7 +223,7 @@ BOOL pushy_fileIsSymbolicLink(const unz_file_info *fileInfo);
     return [self pushy_unzipFileAtPath:path toDestination:destination preserveAttributes:YES overwrite:overwrite password:password error:error delegate:nil progressHandler:nil completionHandler:nil];
 }
 
-+ (BOOL)pushy_unzipFileAtPath:(NSString *)path toDestination:(NSString *)destination delegate:(nullable id<SSZipArchiveDelegate>)delegate
++ (BOOL)pushy_unzipFileAtPath:(NSString *)path toDestination:(NSString *)destination delegate:(nullable id<PushySSZipArchiveDelegate>)delegate
 {
     return [self pushy_unzipFileAtPath:path toDestination:destination preserveAttributes:YES overwrite:YES password:nil error:nil delegate:delegate progressHandler:nil completionHandler:nil];
 }
@@ -233,7 +233,7 @@ BOOL pushy_fileIsSymbolicLink(const unz_file_info *fileInfo);
               overwrite:(BOOL)overwrite
                password:(nullable NSString *)password
                   error:(NSError **)error
-               delegate:(nullable id<SSZipArchiveDelegate>)delegate
+               delegate:(nullable id<PushySSZipArchiveDelegate>)delegate
 {
     return [self pushy_unzipFileAtPath:path toDestination:destination preserveAttributes:YES overwrite:overwrite password:password error:error delegate:delegate progressHandler:nil completionHandler:nil];
 }
@@ -262,7 +262,7 @@ BOOL pushy_fileIsSymbolicLink(const unz_file_info *fileInfo);
               overwrite:(BOOL)overwrite
                password:(nullable NSString *)password
                   error:(NSError * *)error
-               delegate:(nullable id<SSZipArchiveDelegate>)delegate
+               delegate:(nullable id<PushySSZipArchiveDelegate>)delegate
 {
     return [self pushy_unzipFileAtPath:path toDestination:destination preserveAttributes:preserveAttributes overwrite:overwrite password:password error:error delegate:delegate progressHandler:nil completionHandler:nil];
 }
@@ -273,7 +273,7 @@ BOOL pushy_fileIsSymbolicLink(const unz_file_info *fileInfo);
               overwrite:(BOOL)overwrite
                password:(nullable NSString *)password
                   error:(NSError **)error
-               delegate:(nullable id<SSZipArchiveDelegate>)delegate
+               delegate:(nullable id<PushySSZipArchiveDelegate>)delegate
         progressHandler:(void (^_Nullable)(NSString *entry, unz_file_info zipInfo, long entryNumber, long total))progressHandler
       completionHandler:(void (^_Nullable)(NSString *path, BOOL succeeded, NSError * _Nullable error))completionHandler
 {
@@ -287,7 +287,7 @@ BOOL pushy_fileIsSymbolicLink(const unz_file_info *fileInfo);
          nestedZipLevel:(NSInteger)nestedZipLevel
                password:(nullable NSString *)password
                   error:(NSError **)error
-               delegate:(nullable id<SSZipArchiveDelegate>)delegate
+               delegate:(nullable id<PushySSZipArchiveDelegate>)delegate
         progressHandler:(void (^_Nullable)(NSString *entry, unz_file_info zipInfo, long entryNumber, long total))progressHandler
       completionHandler:(void (^_Nullable)(NSString *path, BOOL succeeded, NSError * _Nullable error))completionHandler
 {

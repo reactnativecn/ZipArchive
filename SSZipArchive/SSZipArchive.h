@@ -144,7 +144,7 @@ typedef NS_ENUM(NSInteger, PushySSZipArchiveErrorCode) {
 
 @end
 
-@protocol SSZipArchiveDelegate <NSObject>
+@protocol PushySSZipArchiveDelegate <NSObject>
 
 @optional
 
