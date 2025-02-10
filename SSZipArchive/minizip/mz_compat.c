@@ -558,7 +558,7 @@ int unzCloseCurrentFile(unzFile file)
     return err;
 }
 
-int unzGetCurrentFileInfo(unzFile file, unz_file_info *pfile_info, char *filename,
+int getUnzCurrentFileInfo(unzFile file, unz_file_info *pfile_info, char *filename,
     uint16_t filename_size, void *extrafield, uint16_t extrafield_size, char *comment, uint16_t comment_size)
 {
     mz_compat *compat = (mz_compat *)file;

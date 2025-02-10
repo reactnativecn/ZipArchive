@@ -68,7 +68,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                 break;
             }
             unz_file_info fileInfo = {};
-            ret = unzGetCurrentFileInfo(zip, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+            ret = getUnzCurrentFileInfo(zip, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
             unzCloseCurrentFile(zip);
             if (ret != UNZ_OK) {
                 break;
@@ -122,7 +122,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                 break;
             }
             unz_file_info fileInfo = {};
-            ret = unzGetCurrentFileInfo(zip, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+            ret = getUnzCurrentFileInfo(zip, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
             if (ret != UNZ_OK) {
                 if (error) {
                     *error = [NSError errorWithDomain:SSZipArchiveErrorDomain
@@ -189,7 +189,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                 break;
             }
             unz_file_info fileInfo = {};
-            ret = unzGetCurrentFileInfo(zip, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+            ret = getUnzCurrentFileInfo(zip, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
             if (ret != UNZ_OK) {
                 if (error) {
                     *error = [NSError errorWithDomain:SSZipArchiveErrorDomain
@@ -389,7 +389,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
             unz_file_info fileInfo;
             memset(&fileInfo, 0, sizeof(unz_file_info));
             
-            ret = unzGetCurrentFileInfo(zip, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
+            ret = getUnzCurrentFileInfo(zip, &fileInfo, NULL, 0, NULL, 0, NULL, 0);
             if (ret != UNZ_OK) {
                 unzippingError = [NSError errorWithDomain:@"SSZipArchiveErrorDomain" code:SSZipArchiveErrorCodeFileInfoNotLoadable userInfo:@{NSLocalizedDescriptionKey: @"failed to retrieve info for file"}];
                 success = NO;
@@ -425,7 +425,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                 break;
             }
             
-            unzGetCurrentFileInfo(zip, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
+            getUnzCurrentFileInfo(zip, &fileInfo, filename, fileInfo.size_filename + 1, NULL, 0, NULL, 0);
             filename[fileInfo.size_filename] = '\0';
             
             BOOL fileIsSymbolicLink = _fileIsSymbolicLink(&fileInfo);
