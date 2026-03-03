@@ -323,8 +323,9 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
         }
         return NO;
     }
-    
-    NSDictionary * fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil];
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSDictionary * fileAttributes = [fileManager attributesOfItemAtPath:path error:nil];
     unsigned long long fileSize = [[fileAttributes objectForKey:NSFileSize] unsignedLongLongValue];
     unsigned long long currentPosition = 0;
     
@@ -354,7 +355,6 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
     BOOL canceled = NO;
     int crc_ret = 0;
     unsigned char buffer[4096] = {0};
-    NSFileManager *fileManager = [NSFileManager defaultManager];
     NSMutableArray<NSDictionary *> *directoriesModificationDates = [[NSMutableArray alloc] init];
     
     // Message delegate
@@ -532,7 +532,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                                      progressHandler:nil
                                    completionHandler:nil]) {
                             [directoriesModificationDates removeLastObject];
-                            [[NSFileManager defaultManager] removeItemAtPath:fullPath error:nil];
+                            [fileManager removeItemAtPath:fullPath error:nil];
                         } else if (preserveAttributes) {
                             
                             // Set the original datetime property
@@ -701,7 +701,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
     if (success && preserveAttributes) {
         NSError * err = nil;
         for (NSDictionary * d in directoriesModificationDates) {
-            if (![[NSFileManager defaultManager] setAttributes:@{NSFileModificationDate: [d objectForKey:@"modDate"]} ofItemAtPath:[d objectForKey:@"path"] error:&err]) {
+            if (![fileManager setAttributes:@{NSFileModificationDate: [d objectForKey:@"modDate"]} ofItemAtPath:[d objectForKey:@"path"] error:&err]) {
                 NSLog(@"[SSZipArchive] Set attributes failed for directory: %@.", [d objectForKey:@"path"]);
             }
             if (err) {
