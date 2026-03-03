@@ -446,8 +446,12 @@ int unzGetGlobalInfo64(unzFile file, unz_global_info64 *pglobal_info)
     if (compat == NULL)
         return UNZ_PARAMERROR;
     err = mz_zip_get_comment(compat->handle, &comment_ptr);
-    if (err == MZ_OK)
-        pglobal_info->size_comment = (uint16_t)strlen(comment_ptr);
+    if (err == MZ_OK) {
+        size_t comment_len = strlen(comment_ptr);
+        if (comment_len > UINT16_MAX)
+            return MZ_PARAM_ERROR;
+        pglobal_info->size_comment = (uint16_t)comment_len;
+    }
     if ((err == MZ_OK) || (err == MZ_EXIST_ERROR))
         err = mz_zip_get_number_entry(compat->handle, &pglobal_info->number_entry);
     if (err == MZ_OK)

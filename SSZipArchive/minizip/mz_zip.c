@@ -691,7 +691,10 @@ static int32_t mz_zip_entry_write_header(void *stream, uint8_t local, mz_zip_fil
 
     /* Unix1 symbolic links */
     if (file_info->linkname != NULL && *file_info->linkname != 0) {
-        linkname_size = (uint16_t)strlen(file_info->linkname);
+        size_t linkname_len = strlen(file_info->linkname);
+        if (linkname_len > UINT16_MAX)
+            return MZ_PARAM_ERROR;
+        linkname_size = (uint16_t)linkname_len;
         field_length_unix1 = 12 + linkname_size;
         extrafield_size += 4 + field_length_unix1;
     }
@@ -750,7 +753,12 @@ static int32_t mz_zip_entry_write_header(void *stream, uint8_t local, mz_zip_fil
         filename = file_info->filename;
     }
 
-    filename_length = (uint16_t)strlen(filename);
+    if (filename != NULL) {
+        size_t filename_len = strlen(filename);
+        if (filename_len > UINT16_MAX)
+            return MZ_PARAM_ERROR;
+        filename_length = (uint16_t)filename_len;
+    }
     filename_size += filename_length;
 
     if ((mz_zip_attrib_is_dir(file_info->external_fa, file_info->version_madeby) == MZ_OK) &&

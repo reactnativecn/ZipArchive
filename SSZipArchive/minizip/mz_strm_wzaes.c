@@ -66,7 +66,7 @@ typedef struct mz_stream_wzaes_s {
 int32_t mz_stream_wzaes_open(void *stream, const char *path, int32_t mode) {
     mz_stream_wzaes *wzaes = (mz_stream_wzaes *)stream;
     uint16_t salt_length = 0;
-    uint16_t password_length = 0;
+    size_t password_length = 0;
     uint16_t key_length = 0;
     uint8_t kbuf[2 * MZ_AES_KEY_LENGTH_MAX + MZ_AES_PW_VERIFY_SIZE];
     uint8_t verify[MZ_AES_PW_VERIFY_SIZE];
@@ -85,7 +85,7 @@ int32_t mz_stream_wzaes_open(void *stream, const char *path, int32_t mode) {
         password = wzaes->password;
     if (password == NULL)
         return MZ_PARAM_ERROR;
-    password_length = (uint16_t)strlen(password);
+    password_length = strlen(password);
     if (password_length > MZ_AES_PW_LENGTH_MAX)
         return MZ_PARAM_ERROR;
 
