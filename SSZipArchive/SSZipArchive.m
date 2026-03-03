@@ -90,6 +90,15 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
         *error = nil;
     }
 
+    if (path.length == 0) {
+        if (error) {
+            *error = [NSError errorWithDomain:SSZipArchiveErrorDomain
+                                         code:SSZipArchiveErrorCodeInvalidArguments
+                                     userInfo:@{NSLocalizedDescriptionKey: @"received invalid argument(s)"}];
+        }
+        return NO;
+    }
+
     zipFile zip = unzOpen(path.fileSystemRepresentation);
     if (zip == NULL) {
         if (error) {
