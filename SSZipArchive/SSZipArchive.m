@@ -549,7 +549,7 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
                             }
                             
                             // Set the original permissions on the file (+read/write to solve #293)
-                            uLong permissions = fileInfo.external_fa >> 16 | 0b110000000;
+                            uLong permissions = fileInfo.external_fa >> 16 | (S_IRUSR | S_IWUSR);
                             if (permissions != 0) {
                                 // Store it into a NSNumber
                                 NSNumber *permissionsValue = @(permissions);
@@ -1202,8 +1202,8 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo);
             // Get the short value for the permissions
             short permissionsShort = permissionsValue.shortValue;
             
-            // Convert this into an octal by adding 010000, 010000 being the flag for a regular file
-            NSInteger permissionsOctal = 0100000 + permissionsShort;
+            // Convert this into an octal by adding S_IFREG, S_IFREG being the flag for a regular file
+            NSInteger permissionsOctal = S_IFREG + permissionsShort;
             
             // Convert this into a long value
             uLong permissionsLong = @(permissionsOctal).unsignedLongValue;
@@ -1304,8 +1304,8 @@ BOOL _fileIsSymbolicLink(const unz_file_info *fileInfo)
     //    https://minnie.tuhs.org/cgi-bin/utree.pl?file=4.4BSD/usr/include/sys/stat.h
     //
     const uLong ZipUNIXVersion = 3;
-    const uLong BSD_SFMT = 0170000;
-    const uLong BSD_IFLNK = 0120000;
+    const uLong BSD_SFMT = S_IFMT;
+    const uLong BSD_IFLNK = S_IFLNK;
     
     BOOL fileIsSymbolicLink = ((fileInfo->version >> 8) == ZipUNIXVersion) && BSD_IFLNK == (BSD_SFMT & (fileInfo->external_fa >> 16));
     return fileIsSymbolicLink;
