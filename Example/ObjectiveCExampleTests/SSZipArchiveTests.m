@@ -290,6 +290,27 @@ int twentyMB = 20 * 1024 * 1024;
     XCTAssertFalse(fileHasInvalidValidPassword, @"Invalid password reports true.");
 }
 
+- (void)testIsPasswordValidForArchiveAtPathWithMissingFile {
+    NSString *zipPath = @"/path/to/non/existent/file.zip";
+    NSError *error = nil;
+    BOOL result = [SSZipArchive isPasswordValidForArchiveAtPath:zipPath password:@"password" error:&error];
+
+    XCTAssertFalse(result, @"Should return NO for missing file");
+    XCTAssertNotNil(error, @"Error should not be nil");
+    XCTAssertEqualObjects(error.domain, SSZipArchiveErrorDomain);
+    XCTAssertEqual(error.code, SSZipArchiveErrorCodeFailedOpenZipFile);
+}
+
+- (void)testIsPasswordValidForArchiveAtPathWithInvalidArguments {
+    NSError *error = nil;
+    BOOL result = [SSZipArchive isPasswordValidForArchiveAtPath:@"" password:@"password" error:&error];
+
+    XCTAssertFalse(result, @"Should return NO for empty path");
+    XCTAssertNotNil(error, @"Error should not be nil");
+    XCTAssertEqualObjects(error.domain, SSZipArchiveErrorDomain);
+    XCTAssertEqual(error.code, SSZipArchiveErrorCodeInvalidArguments);
+}
+
 - (void)testIsFilePasswordProtectedAtPath {
     NSString *zipPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"TestArchive" ofType:@"zip"];
     
